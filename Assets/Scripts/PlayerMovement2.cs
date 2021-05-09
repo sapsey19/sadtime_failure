@@ -35,8 +35,8 @@ public class PlayerMovement2 : MonoBehaviour {
     private Vector3 initialPlayerPosition;
 
     private float cameraVerticalAngle;
-    private float characterVelocityY;
-    private Vector3 characterVelocityMomentum;
+    public float characterVelocityY;
+    public Vector3 characterVelocityMomentum;
     private Camera playerCamera;
 
 
@@ -55,18 +55,7 @@ public class PlayerMovement2 : MonoBehaviour {
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 165;
         Cursor.lockState = CursorLockMode.Locked;
-        initialPlayerPosition = transform.position;
-
-        //controller = GetComponent<CharacterController>();
-        //playerCamera = transform.Find("Camera").GetComponent<Camera>();
-        //cameraFov = playerCamera.GetComponent<CameraFov>();
-        //speedLinesParticleSystem = transform.Find("Camera").Find("SpeedLinesParticleSystem").GetComponent<ParticleSystem>();
-        //Cursor.lockState = CursorLockMode.Locked;
-        //state = State.Normal;
-        //hookshot = gun.GetComponent<HookshotGun>();
-        //if (hookshot == null)
-        //    Debug.Log("hookshot not init");
-        //Debug.Log(hookshot == null);
+        initialPlayerPosition = transform.position;       
     }
 
     private void Awake() {
@@ -92,9 +81,9 @@ public class PlayerMovement2 : MonoBehaviour {
                 hookshot.HandleHookshotThrow();
                 HandleCharacterLook();
                 HandleCharacterMovement();
-               
                 break;
             case State.HookshotFlyingPlayer:
+                isGrounded = false;
                 HandleCharacterLook();
                 hookshot.HandleHookshotMovement();
                 HandleCharacterMovement();
@@ -128,7 +117,6 @@ public class PlayerMovement2 : MonoBehaviour {
 
     void HandleCharacterMovement() {
         Vector3 worldspaceMoveInput = transform.TransformVector(GetMoveInput());
-
 
         if (isGrounded) {
             Vector3 targetVelocity = worldspaceMoveInput * maxSpeedOnGround;
@@ -172,7 +160,6 @@ public class PlayerMovement2 : MonoBehaviour {
         //move character
         //characterVelocity += impactVector;
         controller.Move(characterVelocity * Time.deltaTime);
-        //controller.Move(horizontalVelocity * Time.deltaTime);
     }
 
     public void HandleCharacterLook() {
@@ -203,6 +190,5 @@ public class PlayerMovement2 : MonoBehaviour {
         transform.position = initialPlayerPosition;
         controller.enabled = true; //have to do this 
     }
-
 
 }

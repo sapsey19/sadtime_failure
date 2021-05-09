@@ -32,10 +32,6 @@ public class HookshotGun : MonoBehaviour {
 
     private float moveDelay = 0;
 
-    //*notices ur lerp* owo whats this 
-    float timeElapsed;
-    //float lerpDuration
-
     private void Awake() {
         characterController = player.transform.GetComponent<CharacterController>();
         playerCharacterController = player.transform.GetComponent<PlayerMovement2>();
@@ -65,13 +61,9 @@ public class HookshotGun : MonoBehaviour {
     }
 
     public void HandleHookshotThrow() {
-        playerCharacterController.state = PlayerMovement2.State.HookshotFlyingPlayer;
-
-        //if (hitwall) {
-        //    //playerCharacterController.state = PlayerMovement2.State.HookshotFlyingPlayer;
-        //    //cameraFov.SetCameraFov(HOOKSHOT_FOV);
-        //    //speedLinesParticleSystem.Play();
-        //}
+        if (Vector3.Distance(currentGrapplePosition, grapplePoint) < 05f) {
+            playerCharacterController.state = PlayerMovement2.State.HookshotFlyingPlayer;
+        }
     }
 
     public void HandleHookshotMovement() {
@@ -81,33 +73,23 @@ public class HookshotGun : MonoBehaviour {
         float hookshotSpeedMin = 10f;
         float hookshotSpeedMax = 40f;
         float hookshotSpeed = Mathf.Clamp(Vector3.Distance(transform.position, hookshotPosition), hookshotSpeedMin, hookshotSpeedMax);
-        float hookshotSpeedMultiplier = 5f;
+        float hookshotSpeedMultiplier = 5;
 
         // Move Character Controller
-        if (moveDelay > .5f) {
-            characterController.Move(hookshotDir * hookshotSpeed * hookshotSpeedMultiplier * Time.deltaTime);
+     
+        characterController.Move(hookshotDir * hookshotSpeed * hookshotSpeedMultiplier * Time.deltaTime);
 
-        }
-        else {
-            moveDelay += Time.deltaTime;
-        }
-
-
-        //if (Vector3.Distance(transform.position, hookshotPosition) < reachedHookshotPositionDistance) {
-        //    // Reached Hookshot Position
-        //    StopHookshot();
-        //}
 
         if (HookshotInputUp()) {
-            // Cancel Hookshot
+            float momentumExtraSpeed = 20f;
+            playerCharacterController.characterVelocity = hookshotDir * hookshotSpeed * momentumExtraSpeed;
             StopHookshot();
-            moveDelay = 0f;
         }
 
         if (TestInputJump()) {
             // Cancelled with Jump
-            float momentumExtraSpeed = 7f;
-            characterVelocityMomentum = hookshotDir * hookshotSpeed * momentumExtraSpeed;
+            float momentumExtraSpeed = .5f;
+            playerCharacterController.characterVelocity = hookshotDir * hookshotSpeed * momentumExtraSpeed; //something like this 
             float jumpSpeed = 40f;
             characterVelocityMomentum += Vector3.up * jumpSpeed;
             StopHookshot();
@@ -119,17 +101,16 @@ public class HookshotGun : MonoBehaviour {
         ResetGravityEffect();
 
         lr.enabled = false;
-        //hookshotTransform.gameObject.SetActive(false);
         //cameraFov.SetCameraFov(NORMAL_FOV);
         //speedLinesParticleSystem.Stop();
     }
    
 
     public void DrawRope() {
-        //currentGrapplePosition = Vector3.MoveTowards(currentGrapplePosition, grapplePoint, Time.deltaTime * 100f);
+        currentGrapplePosition = Vector3.MoveTowards(currentGrapplePosition, grapplePoint, Time.deltaTime * 100f); //maybe have it go faster as time goes on, Time.delta^2? 
 
         lr.SetPosition(0, gunTip.position);
-        lr.SetPosition(1, grapplePoint);
+        lr.SetPosition(1, currentGrapplePosition);
     }
 
     private bool HookshotInputDown() {
@@ -144,7 +125,7 @@ public class HookshotGun : MonoBehaviour {
         return Input.GetKeyDown(KeyCode.Space);
     }
     private void ResetGravityEffect() {
-        characterVelocityY = 0f;
+        playerCharacterController.characterVelocityY = 0f;
     }
 
 
