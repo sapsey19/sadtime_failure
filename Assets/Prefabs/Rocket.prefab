@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 2804332827082375032}
   - component: {fileID: 3682196033348035565}
   - component: {fileID: 8141032723006422712}
-  - component: {fileID: 1867907095251721873}
   - component: {fileID: 585984445924957509}
+  - component: {fileID: 7393269267900612132}
   m_Layer: 0
   m_Name: Rocket
   m_TagString: Untagged
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 6827371349850929910}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 20.785, y: 3.964, z: 9.518}
-  m_LocalScale: {x: 0.46, y: 0.46, z: 0.46}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -97,24 +97,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1867907095251721873
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6827371349850929910}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1f97f833aa7cb8479ece2f15b5431b8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  velocity: 60
-  explodeCheck: {fileID: 1518606466384963103, guid: 50a2fb63915478b4fb3fc5ab5ef871a7,
-    type: 3}
-  explosionForce: 50
-  blastRadius: 20
-  playerForceModifier: 20
 --- !u!54 &585984445924957509
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -131,3 +113,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &7393269267900612132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6827371349850929910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fc8c84bc3e5f3f4abe130ed0b1e4f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rocketSpeed: 30
+  blastRadius: 10
+  explosionForce: 100

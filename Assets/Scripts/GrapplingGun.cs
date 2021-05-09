@@ -7,20 +7,35 @@ public class GrapplingGun : MonoBehaviour {
     private LineRenderer lr;
     private Vector3 grapplePoint;
     public LayerMask whatIsGrappleable;
-    public Transform gunTip, camera, player;
+    public Transform gunTip, cam, player;
     private float maxDistance = 100f;
     private SpringJoint joint;
+
+    private float distanceFromPoint;
+    public float grappleSpeed = 10f;
+
+    //ignore this 
+    public GameObject rocket;
 
     void Awake() {
         lr = GetComponent<LineRenderer>();
     }
 
     void Update() {
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(1)) {
             StartGrapple();
         }
-        else if (Input.GetMouseButtonUp(0)) {
+        else if (Input.GetMouseButtonUp(1)) {
             StopGrapple();
+        }
+
+        if(IsGrappling()) {
+            joint.maxDistance -= distanceFromPoint * grappleSpeed;
+        }
+
+        //ignore this 
+        if(Input.GetMouseButtonDown(0)) {
+            Instantiate(rocket, gunTip.position, cam.transform.rotation);
         }
     }
 
@@ -29,38 +44,38 @@ public class GrapplingGun : MonoBehaviour {
         DrawRope();
     }
 
-    /// <summary>
+
     /// Call whenever we want to start a grapple
-    /// </summary>
     void StartGrapple() {
         RaycastHit hit;
-        if (Physics.Raycast(camera.position, camera.forward, out hit, maxDistance, whatIsGrappleable)) {
+        if (Physics.Raycast(cam.position, cam.forward, out hit, maxDistance, whatIsGrappleable)) {
+            //player.gameObject.GetComponent<Rigidbody>().useGravity = false;
             grapplePoint = hit.point;
             joint = player.gameObject.AddComponent<SpringJoint>();
             joint.autoConfigureConnectedAnchor = false;
             joint.connectedAnchor = grapplePoint;
 
-            float distanceFromPoint = Vector3.Distance(player.position, grapplePoint);
+            distanceFromPoint = Vector3.Distance(player.position, grapplePoint);
 
             //The distance grapple will try to keep from grapple point. 
-            joint.maxDistance = distanceFromPoint * 0.8f;
-            joint.minDistance = distanceFromPoint * 0.25f;
+            joint.maxDistance = distanceFromPoint * .8f;
+            joint.minDistance = distanceFromPoint * 0.0025f;
 
             //Adjust these values to fit your game.
-            joint.spring = 4.5f;
-            joint.damper = 7f;
+            joint.spring = 8f;
+            joint.damper = 5f;
             joint.massScale = 4.5f;
 
             lr.positionCount = 2;
             currentGrapplePosition = gunTip.position;
+
         }
     }
 
-
-    /// <summary>
+  
     /// Call whenever we want to stop a grapple
-    /// </summary>
     void StopGrapple() {
+        player.gameObject.GetComponent<Rigidbody>().useGravity = true;
         lr.positionCount = 0;
         Destroy(joint);
     }

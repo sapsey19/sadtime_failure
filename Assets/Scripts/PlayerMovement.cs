@@ -80,6 +80,9 @@ public class PlayerMovement : MonoBehaviour {
             StartCrouch();
         if (Input.GetKeyUp(KeyCode.LeftControl))
             StopCrouch();
+        if(Input.GetKeyUp(KeyCode.Alpha1)) {
+            Debug.Log("ljkdfa;lsdf"); 
+        }
     }
 
     private void StartCrouch() {
