@@ -25,18 +25,19 @@ public class PlayerMovement : MonoBehaviour {
 
     public float counterMovement = 0.175f; //how fast you stop moving (friction) 
     private float threshold = 0.01f;
-    public float maxSlopeAngle = 35f; 
+    public float maxSlopeAngle = 35f;
 
     //Crouch & Slide
     private Vector3 crouchScale = new Vector3(1, 0.5f, 1);
     private Vector3 playerScale;
-    public float slideForce = 400; //how much you slide when you crouch 
+    public float slideForce = 4000; //how much you slide when you crouch 
     public float slideCounterMovement = 0.2f; //slide friction 
 
     //Jumping
     private bool readyToJump = true;
     private float jumpCooldown = 0.25f;
     public float jumpForce = 550f;
+    private bool cancellingGrounded;
 
     //Input
     float x, y;
@@ -46,8 +47,30 @@ public class PlayerMovement : MonoBehaviour {
     private Vector3 normalVector = Vector3.up;
     private Vector3 wallNormalVector;
 
+
+    //grappling hook stuff
+    private Camera playerCamera;
+    public Transform gun;
+    private HookshotGun hookshot;
+
+    private const float gravityValue = 1200f;
+    private float gravityMultiplier = gravityValue;
+
+    public State state;
+
+    public enum State {
+        Normal,
+        HookshotThrown,
+        HookshotFlyingPlayer,
+    }
+
     void Awake() {
         rb = GetComponent<Rigidbody>();
+
+        playerCamera = playerCam.Find("Player Camera").GetComponent<Camera>();
+        Cursor.lockState = CursorLockMode.Locked;
+        state = State.Normal;
+        hookshot = gun.GetComponent<HookshotGun>();
     }
 
     void Start() {
@@ -58,17 +81,46 @@ public class PlayerMovement : MonoBehaviour {
 
 
     private void FixedUpdate() {
-        Movement();
+        switch (state) {
+            default:
+            case State.Normal:
+                Movement();
+                break;
+            case State.HookshotThrown:
+                Movement();
+                break;
+            case State.HookshotFlyingPlayer:
+                hookshot.HandleHookshotMovement();
+                break;
+        }
     }
 
     private void Update() {
+        //Debug.Log(rb.velocity);
         MyInput();
-        Look();
+        switch (state) {
+            default:
+            case State.Normal:
+                Look();
+                hookshot.HandleHookshotStart();
+                break;
+            case State.HookshotThrown:
+                hookshot.HandleHookshotThrow();
+                Look();
+                break;
+            case State.HookshotFlyingPlayer:
+                Look();
+                break;
+        }
     }
 
-    /// <summary>
+    private void LateUpdate() {
+        if (state != State.Normal) {
+            hookshot.DrawRope(); //draws rope after physics update 
+        }
+    }
+
     /// Find user input. Should put this in its own class but im lazy
-    /// </summary>
     private void MyInput() {
         x = Input.GetAxisRaw("Horizontal");
         y = Input.GetAxisRaw("Vertical");
@@ -80,8 +132,9 @@ public class PlayerMovement : MonoBehaviour {
             StartCrouch();
         if (Input.GetKeyUp(KeyCode.LeftControl))
             StopCrouch();
-        if(Input.GetKeyUp(KeyCode.Alpha1)) {
-            Debug.Log("ljkdfa;lsdf"); 
+        if (Input.GetMouseButtonUp(1)) {
+            state = State.Normal;
+            hookshot.StopHookshot();
         }
     }
 
@@ -102,7 +155,7 @@ public class PlayerMovement : MonoBehaviour {
 
     private void Movement() {
         //Extra gravity
-        rb.AddForce(Vector3.down * Time.deltaTime * 10);
+        rb.AddForce(Vector3.down * Time.deltaTime * gravityMultiplier);
 
         //Find actual velocity relative to where player is looking, used to add friction 
         Vector2 mag = FindVelRelativeToLook();
@@ -112,7 +165,7 @@ public class PlayerMovement : MonoBehaviour {
         CounterMovement(x, y, mag);
 
         //If holding jump && ready to jump, then jump
-        if (readyToJump && jumping) 
+        if (readyToJump && jumping)
             Jump();
 
         //Set max speed
@@ -140,7 +193,7 @@ public class PlayerMovement : MonoBehaviour {
         }
 
         // Movement while sliding
-        if (grounded && crouching) 
+        if (grounded && crouching)
             multiplierV = 0f;
 
         //Apply forces to move player
@@ -238,11 +291,9 @@ public class PlayerMovement : MonoBehaviour {
         return angle < maxSlopeAngle;
     }
 
-    private bool cancellingGrounded;
+   
 
-    /// <summary>
     /// Handle ground detection
-    /// </summary>
     private void OnCollisionStay(Collision other) {
         //Make sure we are only checking for walkable layers
         int layer = other.gameObject.layer;
@@ -270,6 +321,15 @@ public class PlayerMovement : MonoBehaviour {
 
     private void StopGrounded() {
         grounded = false;
+    }
+
+    //disables extra gravity added to rigibody
+    public void DisableGravity () {
+        gravityMultiplier = 0f;
+    }
+
+    public void EnableGravity() { 
+        gravityMultiplier = gravityValue;
     }
 
 }
