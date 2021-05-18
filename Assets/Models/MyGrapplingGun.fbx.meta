@@ -1,35 +1,8 @@
 fileFormatVersion: 2
-guid: 8af7d49820c09a44b9d5a41e371ec1ab
+guid: f374e5bd02df3a04b80a4c1ae9240faa
 ModelImporter:
   serializedVersion: 20200
-  internalIDToNameTable:
-  - first:
-      74: -1000192057498680385
-    second: Cube.011|Scene_Cube.011
-  - first:
-      74: -7218378767718833601
-    second: Cube.011|Scene_Cube.023
-  - first:
-      74: -7434140854698032702
-    second: Cube.011|Scene_Cube.024
-  - first:
-      74: 4878612246386557198
-    second: Cube.023|Scene_Cube.011
-  - first:
-      74: 1134885550095208725
-    second: Cube.023|Scene_Cube.023
-  - first:
-      74: -3148005172902999368
-    second: Cube.023|Scene_Cube.024
-  - first:
-      74: -7370813634801152179
-    second: Cube.024|Scene_Cube.011
-  - first:
-      74: 3906387001853093563
-    second: Cube.024|Scene_Cube.023
-  - first:
-      74: -8599082787607718164
-    second: Cube.024|Scene_Cube.024
+  internalIDToNameTable: []
   externalObjects: {}
   materials:
     materialImportMode: 2

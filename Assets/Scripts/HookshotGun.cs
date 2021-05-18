@@ -18,19 +18,16 @@ public class HookshotGun : MonoBehaviour {
     private Vector3 grapplePoint;
 
     public LayerMask whatIsGrappleable;
-    private float maxDistance = 1000f; //only this high for testing lole 
+    private readonly float maxDistance = 1000f; //only this high for testing lole 
     public float ropeSpeed = 1000f;
 
     private bool reachedDesination = false;
 
-    private float maxGrappleSpeed = 200f;
+    private readonly float maxGrappleSpeed = 200f;
 
     private AudioSource hookFireSFX;
 
     public GameObject hook;
-
-    public Transform gunRotation;
- 
 
     private void Awake() {
         playerMovement = player.transform.GetComponent<PlayerMovement>();
@@ -41,25 +38,25 @@ public class HookshotGun : MonoBehaviour {
     }
 
     public void HandleHookshotStart() {
+        hook.transform.position = gunTip.position;
+        hook.transform.rotation = gunTip.rotation;
         if (HookshotInputDown()) {
             if(Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit hit, maxDistance, whatIsGrappleable)) {
-                Instantiate(hook, gunTip.position, hit.transform.rotation);
-                Debug.Log(transform.rotation);
-                //hookClone.transform.position += Vector3.forward * Time.deltaTime * 10f;
                 hookFireSFX.Play();
-                //debugHitPointTransform.position = hit.point;
-                grapplePoint = hit.point;
-                playerMovement.state = PlayerMovement.State.HookshotThrown;
+                grapplePoint = hit.point; //point to move to 
 
-                lr.positionCount = 2;
                 currentGrapplePosition = gunTip.position;
 
+                lr.positionCount = 2;
                 lr.enabled = true;
+
+                playerMovement.state = PlayerMovement.State.HookshotThrown;
             }
         }
     }
 
-    public void HandleHookshotThrow() {
+    public void HandleHookshotThrow() { 
+        //hook.transform.position += Vector3.forward;
         if (HookshotInputUp())
             StopHookshot();
         else { //if rope distance is close enough to wall, start grapple 
@@ -91,7 +88,7 @@ public class HookshotGun : MonoBehaviour {
             reachedDesination = true;
         }
         else if (!reachedDesination) {
-            playerRb.AddForce(hookshotDir * hookshotSpeed * hookshotSpeedMultiplier * Time.deltaTime);
+            playerRb.AddForce(hookshotDir * hookshotSpeed * hookshotSpeedMultiplier * Time.deltaTime); //move player 
         }
 
         playerRb.velocity = Vector3.ClampMagnitude(playerRb.velocity, maxGrappleSpeed); //limit move speed 
@@ -103,7 +100,7 @@ public class HookshotGun : MonoBehaviour {
 
     public void StopHookshot() {
         playerMovement.state = PlayerMovement.State.Normal;
-        //enabled both rigibody gravity and extra gravity in playerMovement script 
+        //enable both rigibody gravity and extra gravity in playerMovement script 
         playerRb.useGravity = true;
         playerMovement.EnableGravity();
         reachedDesination = false;
@@ -111,14 +108,10 @@ public class HookshotGun : MonoBehaviour {
     }
    
 
-    public void DrawRope() {
-        //float speed;
-        //if (playerRb.velocity.magnitude > 2f) {
-        //    speed = playerRb.velocity.magnitude * 6;
-        //}
-        //else
-        //    speed = 100f;
+    public void DrawRope() {        
         currentGrapplePosition = Vector3.MoveTowards(currentGrapplePosition, grapplePoint, Time.deltaTime * ropeSpeed);
+        
+        hook.transform.position = currentGrapplePosition; //draw hook at end of line 
 
         lr.SetPosition(0, gunTip.position);
         lr.SetPosition(1, currentGrapplePosition);

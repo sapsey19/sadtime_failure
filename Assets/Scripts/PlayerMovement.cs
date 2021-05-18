@@ -58,6 +58,8 @@ public class PlayerMovement : MonoBehaviour {
 
     public State state;
 
+    public GameObject hook;
+
     public enum State {
         Normal,
         HookshotThrown,
@@ -93,10 +95,10 @@ public class PlayerMovement : MonoBehaviour {
                 hookshot.HandleHookshotMovement();
                 break;
         }
+        
     }
 
     private void Update() {
-        //Debug.Log(rb.velocity);
         MyInput();
         switch (state) {
             default:

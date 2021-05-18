@@ -1,36 +1,14 @@
 fileFormatVersion: 2
-guid: d65bf05b35a1fcc4b8a9c1bb57efbb61
+guid: 02614691b5ea7d34ca1e69dbf76cbc97
 ModelImporter:
   serializedVersion: 20200
-  internalIDToNameTable:
+  internalIDToNameTable: []
+  externalObjects:
   - first:
-      74: -1000192057498680385
-    second: Cube.011|Scene_Cube.011
-  - first:
-      74: -7218378767718833601
-    second: Cube.011|Scene_Cube.023
-  - first:
-      74: -7434140854698032702
-    second: Cube.011|Scene_Cube.024
-  - first:
-      74: 4878612246386557198
-    second: Cube.023|Scene_Cube.011
-  - first:
-      74: 1134885550095208725
-    second: Cube.023|Scene_Cube.023
-  - first:
-      74: -3148005172902999368
-    second: Cube.023|Scene_Cube.024
-  - first:
-      74: -7370813634801152179
-    second: Cube.024|Scene_Cube.011
-  - first:
-      74: 3906387001853093563
-    second: Cube.024|Scene_Cube.023
-  - first:
-      74: -8599082787607718164
-    second: Cube.024|Scene_Cube.024
-  externalObjects: {}
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.001
+    second: {fileID: 2100000, guid: 06c72f56765118f4aa666e7ab05efcd5, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
