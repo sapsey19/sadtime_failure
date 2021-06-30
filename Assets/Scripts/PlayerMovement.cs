@@ -138,6 +138,10 @@ public class PlayerMovement : MonoBehaviour {
             state = State.Normal;
             hookshot.StopHookshot();
         }
+
+        if(Input.GetKeyDown(KeyCode.F)) {
+            hookshot.enabled = false;
+        }
     }
 
     private void StartCrouch() {
