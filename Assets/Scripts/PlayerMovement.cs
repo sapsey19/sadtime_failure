@@ -28,7 +28,7 @@ public class PlayerMovement : MonoBehaviour {
     public float maxSlopeAngle = 35f;
 
     //Crouch & Slide
-    private Vector3 crouchScale = new Vector3(1, 0.5f, 1);
+    private Vector3 crouchScale = new Vector3(1, 0.8f, 1); //new Vector3(1, 0.5f, 1); 
     private Vector3 playerScale;
     public float slideForce = 4000; //how much you slide when you crouch 
     public float slideCounterMovement = 0.2f; //slide friction 
@@ -41,7 +41,7 @@ public class PlayerMovement : MonoBehaviour {
 
     //Input
     float x, y;
-    bool jumping, sprinting, crouching;
+    public static bool jumping, sprinting, crouching;
 
     //Sliding
     private Vector3 normalVector = Vector3.up;
@@ -53,7 +53,7 @@ public class PlayerMovement : MonoBehaviour {
     public Transform gun;
     private HookshotGun hookshot;
 
-    private const float gravityValue = 1200f;
+    private const float gravityValue = 2000f; //1200f default 
     private float gravityMultiplier = gravityValue;
 
     public State state;
