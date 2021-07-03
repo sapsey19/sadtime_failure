@@ -104,7 +104,8 @@ public class PlayerMovement : MonoBehaviour {
             default:
             case State.Normal:
                 Look();
-                hookshot.HandleHookshotStart();
+                if(hookshot.isActiveAndEnabled) //check to see if grapple gun is active weapon (should be a better way but i do not possess the brain cells to figure it out at the moment please forgive me) 
+                    hookshot.HandleHookshotStart();
                 break;
             case State.HookshotThrown:
                 hookshot.HandleHookshotThrow();

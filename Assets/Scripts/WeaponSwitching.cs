@@ -1,6 +1,8 @@
 using UnityEngine;
 
 public class WeaponSwitching : MonoBehaviour {
+    //weapon index is based on Unity Hierachy
+    //first weapon in hierachy has index 0, second has 1, etc 
 
     public int selectedWeapon = 0; 
 
