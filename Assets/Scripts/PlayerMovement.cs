@@ -60,6 +60,8 @@ public class PlayerMovement : MonoBehaviour {
 
     public GameObject hook;
 
+    private AudioSource jump;
+
     public enum State {
         Normal,
         HookshotThrown,
@@ -73,6 +75,7 @@ public class PlayerMovement : MonoBehaviour {
         Cursor.lockState = CursorLockMode.Locked;
         state = State.Normal;
         hookshot = gun.GetComponent<HookshotGun>();
+        jump = GetComponent<AudioSource>();
     }
 
     void Start() {
@@ -215,6 +218,9 @@ public class PlayerMovement : MonoBehaviour {
             //Add jump forces
             rb.AddForce(Vector2.up * jumpForce * 1.5f);
             rb.AddForce(normalVector * jumpForce * 0.5f);
+
+            //play jump audio
+            jump.Play();
 
             //If jumping while falling, reset y velocity.
             Vector3 vel = rb.velocity;

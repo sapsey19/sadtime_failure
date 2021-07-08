@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Rocket : MonoBehaviour {
 
-    public static PlayerMovement player; 
+    public PlayerMovement player; 
 
     //projectile variables
     public float speed;
@@ -12,6 +12,8 @@ public class Rocket : MonoBehaviour {
     public float explosionForce;
 
     private float explosionModifier;
+
+    public AudioClip explosion;
 
     private void Update() {
         transform.position += transform.forward * Time.deltaTime * speed;
@@ -38,6 +40,8 @@ public class Rocket : MonoBehaviour {
                     temp.AddExplosionForce(explosionForce * explosionModifier, transform.position, explosionRadius);
                 }
             }
+            Debug.Log(Camera.main.transform.position);
+            AudioSource.PlayClipAtPoint(explosion, 0.9f * Camera.main.transform.position + 0.1f * transform.position, 1f); //makes audio louder by playing at a closer position to camera
             Destroy(gameObject);
         }
     }
