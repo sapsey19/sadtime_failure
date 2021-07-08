@@ -7,15 +7,14 @@ public class LaucherScript : MonoBehaviour {
     public GameObject rocket;
     public Transform spawnPos;
 
-    public float delay = 1f;
+    private float delay = 0.8f;
 
     float time = 0;
 
     void Update() {
-        time += Time.deltaTime;
-        Debug.Log(time);
+        time += Time.fixedDeltaTime;
         if (time > delay) {
-            if (Input.GetMouseButtonDown(0)) {
+            if (Input.GetButton("Fire1")) {
                 Instantiate(rocket, spawnPos.transform.position, transform.rotation);
                 time = 0;
             }
