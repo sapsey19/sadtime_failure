@@ -20,7 +20,7 @@ public class Rocket : MonoBehaviour {
     }
 
     private void OnTriggerEnter(Collider other) {
-        if(PlayerMovement.crouching && PlayerMovement.jumping) {
+        if(PlayerMovement.crouching && PlayerMovement.jumping) { //maybe should just change player weight or something or maybe not bc that would mess up with how fast you fall so on second thought i don't think it's actually a good idea
             explosionModifier = 2.0f;
         }
         else if(PlayerMovement.crouching) {
@@ -36,11 +36,10 @@ public class Rocket : MonoBehaviour {
             Collider[] hitObjects = Physics.OverlapSphere(transform.position, explosionRadius);
             foreach(Collider hit in hitObjects) {
                 Rigidbody temp = hit.GetComponent<Rigidbody>();
-                if(temp) { //is not null 
+                if(temp) {
                     temp.AddExplosionForce(explosionForce * explosionModifier, transform.position, explosionRadius);
                 }
             }
-            Debug.Log(Camera.main.transform.position);
             AudioSource.PlayClipAtPoint(explosion, 0.9f * Camera.main.transform.position + 0.1f * transform.position, 1f); //makes audio louder by playing at a closer position to camera
             Destroy(gameObject);
         }

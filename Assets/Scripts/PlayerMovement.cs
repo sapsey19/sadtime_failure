@@ -107,7 +107,7 @@ public class PlayerMovement : MonoBehaviour {
             default:
             case State.Normal:
                 Look();
-                if(hookshot.isActiveAndEnabled) //check to see if grapple gun is active weapon (should be a better way but i do not possess the brain cells to figure it out at the moment please forgive me) 
+                if(hookshot.isActiveAndEnabled) //check to see if grapple gun is active weapon (should be a better way but i do not possess the brain cells to figure it out at the moment please forgive me) -> the beter way is making an input class 
                     hookshot.HandleHookshotStart();
                 break;
             case State.HookshotThrown:
@@ -126,7 +126,7 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
-    /// Find user input. Should put this in its own class but im lazy
+    // Find user input. Should put this in its own class but im lazy
     private void MyInput() {
         x = Input.GetAxisRaw("Horizontal");
         y = Input.GetAxisRaw("Vertical");
@@ -138,13 +138,9 @@ public class PlayerMovement : MonoBehaviour {
             StartCrouch();
         if (Input.GetKeyUp(KeyCode.LeftControl))
             StopCrouch();
-        if (Input.GetMouseButtonUp(1)) {
-            state = State.Normal;
+        if (Input.GetMouseButtonUp(0)) { // i don't like having grapple hook input in player move class... fix it 
+            state = State.Normal; 
             hookshot.StopHookshot();
-        }
-
-        if(Input.GetKeyDown(KeyCode.F)) {
-            hookshot.enabled = false;
         }
     }
 
@@ -310,7 +306,7 @@ public class PlayerMovement : MonoBehaviour {
     private void OnCollisionStay(Collision other) {
         //Make sure we are only checking for walkable layers
         int layer = other.gameObject.layer;
-        if (whatIsGround != (whatIsGround | (1 << layer))) return;
+        if (whatIsGround != (whatIsGround | (1 << layer))) return; //???????????????????????????
 
         //Iterate through every collision in a physics update
         for (int i = 0; i < other.contactCount; i++) {
