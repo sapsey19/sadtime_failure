@@ -12,11 +12,10 @@ GameObject:
   - component: {fileID: 2804332827082375032}
   - component: {fileID: 3682196033348035565}
   - component: {fileID: 8141032723006422712}
-  - component: {fileID: 585984445924957509}
   - component: {fileID: 6633101134819055656}
-  - component: {fileID: 139218874280952325}
+  - component: {fileID: 3641746178122910042}
   m_Layer: 0
-  m_Name: Rocket
+  m_Name: Test Rocket
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -98,22 +97,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &585984445924957509
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6827371349850929910}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 0
-  m_CollisionDetection: 3
 --- !u!114 &6633101134819055656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,20 +114,19 @@ MonoBehaviour:
   explosionRadius: 35
   explosionForce: 2000
   explosion: {fileID: 8300000, guid: 6dad10100bd40f94f8319ee2829e16c1, type: 3}
---- !u!114 &139218874280952325
-MonoBehaviour:
+--- !u!54 &3641746178122910042
+Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6827371349850929910}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65bcf817dc3937941b32b9cf256fabe6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sendTriggerMessage: 1
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 256
-  skinWidth: 0.1
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 1

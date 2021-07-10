@@ -16,7 +16,7 @@ public class Rocket : MonoBehaviour {
     public AudioClip explosion;
 
     private void Update() {
-        transform.position += transform.forward * Time.deltaTime * speed;
+        //transform.position += transform.forward * Time.deltaTime * speed;
     }
 
     private void OnTriggerEnter(Collider other) {

@@ -118,11 +118,11 @@ public class HookshotGun : MonoBehaviour {
     }
 
     private bool HookshotInputDown() {
-        return Input.GetMouseButtonDown(1);
+        return Input.GetMouseButtonDown(0); //why do i have like 3 different places where i have input 
     }
 
     private bool HookshotInputUp() {
-        return Input.GetMouseButtonUp(1);
+        return Input.GetMouseButtonUp(0);  //this shouldnt exist methinks 
     }
 
 }
