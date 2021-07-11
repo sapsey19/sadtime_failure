@@ -4,21 +4,15 @@ using UnityEngine;
 
 public class Rocket : MonoBehaviour {
 
-    public PlayerMovement player; 
+    //public PlayerMovement player; 
 
     //projectile variables
-    public float speed;
     public float explosionRadius;
     public float explosionForce;
 
     private float explosionModifier;
 
     public AudioClip explosion;
-
-    private void Update() {
-        //transform.position += transform.forward * Time.deltaTime * speed;
-    }
-
     private void OnTriggerEnter(Collider other) {
         if(PlayerMovement.crouching && PlayerMovement.jumping) { //maybe should just change player weight or something or maybe not bc that would mess up with how fast you fall so on second thought i don't think it's actually a good idea
             explosionModifier = 2.0f;

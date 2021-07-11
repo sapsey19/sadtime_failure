@@ -28,7 +28,7 @@ public class PlayerMovement : MonoBehaviour {
     public float maxSlopeAngle = 35f;
 
     //Crouch & Slide
-    private Vector3 crouchScale = new Vector3(1, 0.8f, 1); //new Vector3(1, 0.5f, 1); 
+    private Vector3 crouchScale = new Vector3(1, 0.8f, 1); //old settings: new Vector3(1, 0.5f, 1); 
     private Vector3 playerScale;
     public float slideForce = 4000; //how much you slide when you crouch 
     public float slideCounterMovement = 0.2f; //slide friction 
@@ -79,6 +79,7 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     void Start() {
+        Application.targetFrameRate = 165;
         playerScale = transform.localScale;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

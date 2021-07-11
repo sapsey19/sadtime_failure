@@ -7,6 +7,7 @@ public class LaucherScript : MonoBehaviour {
     public GameObject rocket;
     public Transform spawnPos;
     public LayerMask whatIsExplodable;
+    public float rocketSpeed;
 
     public GameObject testhit;
 
@@ -17,14 +18,13 @@ public class LaucherScript : MonoBehaviour {
     void Update() {
         time += Time.deltaTime;
         if (Input.GetButton("Fire1") && time > delay) {
-            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 1f, whatIsExplodable)) { //if gun is close to/in wall
-                GameObject tempRocket = Instantiate(rocket, hit.point, transform.rotation);
-                //testhit.transform.position = hit.point;
+            GameObject tempRocket = Instantiate(rocket, spawnPos.position, transform.rotation);
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 1000f, whatIsExplodable)) {
+                Vector3 direction = (hit.point - spawnPos.transform.position).normalized; //get direction from raycast to laucher
+                tempRocket.GetComponent<Rigidbody>().AddForce(direction * rocketSpeed, ForceMode.Impulse);
             }
-            else {
-                GameObject tempRocket = Instantiate(rocket, spawnPos.transform.position, transform.rotation);
-                tempRocket.GetComponent<Rigidbody>().AddForce(transform.forward * 80f, ForceMode.Impulse);
-            }
+            else
+                tempRocket.GetComponent<Rigidbody>().AddForce(transform.forward * rocketSpeed, ForceMode.Impulse);
             time = 0;
         }
     }
