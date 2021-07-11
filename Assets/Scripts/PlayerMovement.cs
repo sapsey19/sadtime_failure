@@ -79,7 +79,7 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     void Start() {
-        Application.targetFrameRate = 165;
+        Application.targetFrameRate = 300;
         playerScale = transform.localScale;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

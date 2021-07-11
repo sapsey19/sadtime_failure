@@ -14,10 +14,15 @@ public class LaucherScript : MonoBehaviour {
     private readonly float delay = 0.8f;
 
     float time = 0;
+    private Animation recoil;
 
+    private void Start() {
+        recoil = GetComponent<Animation>();
+    }
     void Update() {
         time += Time.deltaTime;
         if (Input.GetButton("Fire1") && time > delay) {
+            recoil.Play("LauncherRecoil");
             GameObject tempRocket = Instantiate(rocket, spawnPos.position, transform.rotation);
             if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 1000f, whatIsExplodable)) {
                 Vector3 direction = (hit.point - spawnPos.transform.position).normalized; //get direction from raycast to laucher
