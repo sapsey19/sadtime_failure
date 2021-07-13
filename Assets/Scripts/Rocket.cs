@@ -4,17 +4,24 @@ using UnityEngine;
 
 public class Rocket : MonoBehaviour {
 
-    //public PlayerMovement player; 
-
     //projectile variables
     public float explosionRadius;
     public float explosionForce;
 
-    private float explosionModifier;
+    private float explosionModifier; //change how high player moves based on crouching, jumping, etc
 
     public AudioClip explosion;
+
+    private SmokeTrail trail;
+    //private AudioSource fireSound;
+
+    private void Awake() {
+        trail = transform.Find("CartoonSmoke").GetComponent<SmokeTrail>();
+        //fireSound = GetComponent<AudioSource>();
+    }
+
     private void OnTriggerEnter(Collider other) {
-        if(PlayerMovement.crouching && PlayerMovement.jumping) { //maybe should just change player weight or something or maybe not bc that would mess up with how fast you fall so on second thought i don't think it's actually a good idea
+        if(PlayerMovement.crouching && PlayerMovement.jumping) {
             explosionModifier = 2.0f;
         }
         else if(PlayerMovement.crouching) {
@@ -26,15 +33,29 @@ public class Rocket : MonoBehaviour {
         else {
             explosionModifier = 1.0f;
         }
-        if(other.CompareTag("Environment")) {
+
+        if (other.CompareTag("Environment") || other.CompareTag("Enemy")) { //mabye just have an explodable tag 
             Collider[] hitObjects = Physics.OverlapSphere(transform.position, explosionRadius);
-            foreach(Collider hit in hitObjects) {
-                Rigidbody temp = hit.GetComponent<Rigidbody>();
-                if(temp) {
-                    temp.AddExplosionForce(explosionForce * explosionModifier, transform.position, explosionRadius);
+            foreach (Collider hit in hitObjects) {
+                Rigidbody rb = hit.GetComponent<Rigidbody>();
+                if (rb) {
+                    if(rb.CompareTag("Player")) { 
+                        rb.AddExplosionForce(explosionForce * explosionModifier, transform.position, explosionRadius);
+                    }
+                    if (rb.CompareTag("Enemy")) { //if an enemy is in explosion radius 
+                        rb.GetComponent<EnemyAi>().DisableAi(); //disable navigation to allow upwards lift
+                        rb.AddExplosionForce(explosionForce * explosionModifier, transform.position, explosionRadius, 10f);
+                    }
+                    else {
+                        rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
+                    }
+                    
                 }
             }
             AudioSource.PlayClipAtPoint(explosion, 0.9f * Camera.main.transform.position + 0.1f * transform.position, 1f); //makes audio louder by playing at a closer position to camera
+
+            if (trail)
+                trail.AboutToDie(); //let smoke trail persist after rocket is deleted 
             Destroy(gameObject);
         }
     }

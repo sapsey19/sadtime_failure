@@ -31,7 +31,7 @@ public class PlayerMovement : MonoBehaviour {
     private Vector3 crouchScale = new Vector3(1, 0.8f, 1); //old settings: new Vector3(1, 0.5f, 1); 
     private Vector3 playerScale;
     public float slideForce = 4000; //how much you slide when you crouch 
-    public float slideCounterMovement = 0.2f; //slide friction 
+    public float slideCounterMovement = 0.1f; //slide friction 
 
     //Jumping
     private bool readyToJump = true;
@@ -79,7 +79,7 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     void Start() {
-        Application.targetFrameRate = 300;
+        Application.targetFrameRate = 144;
         playerScale = transform.localScale;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -200,8 +200,10 @@ public class PlayerMovement : MonoBehaviour {
         }
 
         // Movement while sliding
-        if (grounded && crouching)
+        if (grounded && crouching) {
             multiplierV = 0f;
+        }
+
 
         //Apply forces to move player
         rb.AddForce(orientation.transform.forward * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
@@ -277,11 +279,8 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
-    /// <summary>
-    /// Find the velocity relative to where the player is looking
-    /// Useful for vectors calculations regarding movement and limiting movement
-    /// </summary>
-    /// <returns></returns>
+    //Find the velocity relative to where the player is looking
+    //Useful for vectors calculations regarding movement and limiting movement
     public Vector2 FindVelRelativeToLook() {
         float lookAngle = orientation.transform.eulerAngles.y;
         float moveAngle = Mathf.Atan2(rb.velocity.x, rb.velocity.z) * Mathf.Rad2Deg;
@@ -303,7 +302,7 @@ public class PlayerMovement : MonoBehaviour {
 
    
 
-    /// Handle ground detection
+    //Handle ground detection
     private void OnCollisionStay(Collision other) {
         //Make sure we are only checking for walkable layers
         int layer = other.gameObject.layer;

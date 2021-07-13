@@ -4,7 +4,9 @@ public class WeaponSwitching : MonoBehaviour {
     //weapon index is based on Unity Hierachy
     //first weapon in hierachy has index 0, second has 1, etc 
 
-    public int selectedWeapon = 0; 
+    public int selectedWeapon = 0;
+
+    private int previousWeapon = 1;
 
     void Start() {
         SelectWeapon();
@@ -13,10 +15,12 @@ public class WeaponSwitching : MonoBehaviour {
     void Update() {
         int previousSelectedWeapon = selectedWeapon;
         if(Input.GetAxis("Mouse ScrollWheel") > 0f) {
-            if (selectedWeapon >= transform.childCount - 1)
+            if (selectedWeapon >= transform.childCount - 1) {
                 selectedWeapon = 0;
-            else
+            }
+            else {
                 selectedWeapon++;
+            }
         }
         if (Input.GetAxis("Mouse ScrollWheel") < 0f) {
             if (selectedWeapon <= 0)
@@ -27,14 +31,21 @@ public class WeaponSwitching : MonoBehaviour {
 
         if(Input.GetKeyDown(KeyCode.Alpha1)) {
             selectedWeapon = 0;
+            previousWeapon = 1;
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2)) {
             selectedWeapon = 1;
+            previousWeapon = 0;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q)) {
+            selectedWeapon = previousWeapon;
+            SelectWeapon();
         }
 
         if (previousSelectedWeapon != selectedWeapon) {
             SelectWeapon();
-        }
+        }        
     }
 
     void SelectWeapon() {
