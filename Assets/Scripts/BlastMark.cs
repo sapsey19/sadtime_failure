@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BlaskMark : MonoBehaviour {
+public class BlastMark : MonoBehaviour {
     public float despawnTime;
 
     void Start() {

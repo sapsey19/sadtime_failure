@@ -24,7 +24,7 @@ public class PlayerMovement : MonoBehaviour {
     public LayerMask whatIsGround;
 
     public float counterMovement = 0.175f; //how fast you stop moving (friction) 
-    private float threshold = 0.01f;
+    private readonly float threshold = 0.01f;
     public float maxSlopeAngle = 35f;
 
     //Crouch & Slide
@@ -299,8 +299,6 @@ public class PlayerMovement : MonoBehaviour {
         float angle = Vector3.Angle(Vector3.up, v);
         return angle < maxSlopeAngle;
     }
-
-   
 
     //Handle ground detection
     private void OnCollisionStay(Collision other) {

@@ -2,25 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SmokeTrail : MonoBehaviour {
-
-    private ParticleSystem smokeParticles;
+public class Explosion : MonoBehaviour {
+    private ParticleSystem explosionParticles;
 
     void Start() {
-        smokeParticles = GetComponent<ParticleSystem>();
+        explosionParticles = GetComponent<ParticleSystem>();
         StartCoroutine(Persist());
     }
 
     public void AboutToDie() {
         transform.parent = null;
-        var emission = smokeParticles.emission;
+        var emission = explosionParticles.emission;
         emission.rateOverTime = 0f;
         transform.localScale = new Vector3(1, 1, 1);
+    }
+
+    public void Play() {
+        explosionParticles.Play();
     }
 
     IEnumerator Persist() {
         yield return new WaitForSeconds(3.0f);
         Destroy(gameObject);
     }
-
 }

@@ -26,6 +26,11 @@ public class EnemyAi : MonoBehaviour {
 
     private float health;
 
+    //test floor stuff
+    private bool grounded;
+    private Vector3 normalVector = Vector3.up;
+    private bool cancellingGrounded;
+
     private void Awake() {
         player = GameObject.Find("Player Container").transform.GetChild(0).transform;
         agent = GetComponent<NavMeshAgent>();
@@ -35,11 +40,13 @@ public class EnemyAi : MonoBehaviour {
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
-        if (!playerInSightRange && !playerInAttackRange) Patrolling();
-        if (playerInSightRange && !playerInAttackRange) ChasePlayer();
-        if (playerInSightRange && playerInAttackRange) AttackPlayer();
+        if (!playerInSightRange && !playerInAttackRange && agent.enabled) Patrolling();
+        if (playerInSightRange && !playerInAttackRange && agent.enabled) ChasePlayer();
+        if (playerInSightRange && playerInAttackRange && agent.enabled) AttackPlayer();
 
-        IsOnGround();
+        if(!agent.enabled && grounded) {
+            agent.enabled = true;
+        }
     }
 
     private void Patrolling() {
@@ -61,7 +68,9 @@ public class EnemyAi : MonoBehaviour {
 
     private void AttackPlayer() {
 
-        if(agent.enabled) agent.SetDestination(transform.position);
+        if (agent.enabled) {
+            agent.SetDestination(transform.position);
+        }
 
         transform.LookAt(player);
 
@@ -81,14 +90,16 @@ public class EnemyAi : MonoBehaviour {
     }
 
     private void SearchWalkPoint() {
-        float randomZ = Random.Range(-walkPointRange, walkPointRange);
-        float randomX = Random.Range(-walkPointRange, walkPointRange);
+        if (agent.enabled) {
+            float randomZ = Random.Range(-walkPointRange, walkPointRange);
+            float randomX = Random.Range(-walkPointRange, walkPointRange);
 
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+            walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
 
-        if(Physics.Raycast(walkPoint, -transform.up, 2f, whatIsGround)) {
-            walkPointSet = true; 
-        } 
+            if (Physics.Raycast(walkPoint, -transform.up, 2f, whatIsGround)) {
+                walkPointSet = true;
+            }
+        }
     }
 
     public void TakeDamage(float damage) {
@@ -104,53 +115,57 @@ public class EnemyAi : MonoBehaviour {
     }
 
     //public void OnTriggerEnter(Collider other) {
-    //    if(!agent.enabled && other.CompareTag("Environment")) {
+    //    if (!agent.enabled && other.CompareTag("Environment")) {
     //        agent.enabled = true;
     //        GetComponent<Rigidbody>().isKinematic = true;
-    //        Debug.Log("enabled");
+    //        //Debug.Log("enabled");
     //    }
     //}
 
-    private void IsOnGround() {
-        if(Physics.Raycast(transform.position, -Vector3.up, out RaycastHit hit, 10f)) {
-            if(hit.transform.CompareTag("Environment")) {
-                Debug.DrawLine(transform.position, hit.point, Color.cyan);
-                Debug.Log("heherh");
-                agent.enabled = true;
-                GetComponent<Rigidbody>().isKinematic = true;
+    //private void IsOnGround() {
+    //    if(Physics.Raycast(transform.position, -Vector3.up, out RaycastHit hit, 10f)) {
+    //        if(hit.transform.CompareTag("Environment")) {
+    //            Debug.DrawLine(transform.position, hit.point, Color.cyan);
+    //            Debug.Log("heherh");
+    //            agent.enabled = true;
+    //            GetComponent<Rigidbody>().isKinematic = true;
+    //        }
+    //    }
+    //}
+
+    private bool IsFloor(Vector3 v) {
+        float angle = Vector3.Angle(Vector3.up, v);
+        return angle < 35;
+    }
+
+    private void OnCollisionStay(Collision other) {
+        //Make sure we are only checking for walkable layers
+        int layer = other.gameObject.layer;
+        if (whatIsGround != (whatIsGround | (1 << layer))) return; //???????????????????????????
+
+        //Iterate through every collision in a physics update
+        for (int i = 0; i < other.contactCount; i++) {
+            Vector3 normal = other.contacts[i].normal;
+            //FLOOR
+            if (IsFloor(normal)) {
+                grounded = true;
+                cancellingGrounded = false;
+                normalVector = normal;
+                CancelInvoke(nameof(StopGrounded));
             }
+        }
+
+        //Invoke ground/wall cancel, since we can't check normals with CollisionExit
+        float delay = 3f;
+        if (!cancellingGrounded) {
+            cancellingGrounded = true;
+            Invoke(nameof(StopGrounded), Time.deltaTime * delay);
         }
     }
 
-    //private bool IsFloor(Vector3 v) {
-    //    float angle = Vector3.Angle(Vector3.up, v);
-    //    return angle < 35;
-    //}
-
-    //private void OnCollisionStay(Collision other) {
-    //    //Make sure we are only checking for walkable layers
-    //    int layer = other.gameObject.layer;
-    //    if (whatIsGround != (whatIsGround | (1 << layer))) return; //???????????????????????????
-
-    //    //Iterate through every collision in a physics update
-    //    for (int i = 0; i < other.contactCount; i++) {
-    //        Vector3 normal = other.contacts[i].normal;
-    //        //FLOOR
-    //        //if (IsFloor(normal)) {
-    //        //    grounded = true;
-    //        //    cancellingGrounded = false;
-    //        //    normalVector = normal;
-    //        //    CancelInvoke(nameof(StopGrounded));
-    //        //}
-    //    }
-
-    //    //Invoke ground/wall cancel, since we can't check normals with CollisionExit
-    //    float delay = 3f;
-    //    //if (!cancellingGrounded) {
-    //    //    cancellingGrounded = true;
-    //    //    Invoke(nameof(StopGrounded), Time.deltaTime * delay);
-    //    //}
-    //}
+    private void StopGrounded() {
+        grounded = false;
+    }
 
     private void DestroyEnemy() {
         Destroy(gameObject);
