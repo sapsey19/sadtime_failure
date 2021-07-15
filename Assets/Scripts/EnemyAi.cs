@@ -45,6 +45,7 @@ public class EnemyAi : MonoBehaviour {
         if (playerInSightRange && playerInAttackRange && agent.enabled) AttackPlayer();
 
         if(!agent.enabled && grounded) {
+            GetComponent<Rigidbody>().isKinematic = true;
             agent.enabled = true;
         }
     }
@@ -77,11 +78,10 @@ public class EnemyAi : MonoBehaviour {
         if(!alreadyAttacked) {
             Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
             rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(transform.up * 8f, ForceMode.Impulse);
+            rb.AddForce(transform.up * 3f, ForceMode.Impulse);
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
-            
         }
     }
 
@@ -110,8 +110,8 @@ public class EnemyAi : MonoBehaviour {
     }
 
     public void DisableAi() {
-        agent.enabled = false;
         GetComponent<Rigidbody>().isKinematic = false;
+        agent.enabled = false;
     }
 
     //public void OnTriggerEnter(Collider other) {

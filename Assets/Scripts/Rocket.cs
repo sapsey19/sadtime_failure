@@ -10,7 +10,8 @@ public class Rocket : MonoBehaviour {
 
     private float explosionModifier; //change how high player moves based on crouching, jumping, etc
 
-    public AudioClip explosion;
+    //public AudioClip explosion;
+    public AudioSource explosion;
 
     private SmokeTrail trail;
     //public GameObject explosionHolder;
@@ -18,8 +19,9 @@ public class Rocket : MonoBehaviour {
     private Explosion explosionParticles;
 
     private void Awake() {
-        trail = transform.Find("CartoonSmoke").GetComponent<SmokeTrail>();
+        trail = transform.Find("SmokeTrail_Cartoon").GetComponent<SmokeTrail>();
         explosionParticles = transform.Find("Explosion").GetComponent<Explosion>();
+        explosion = GetComponent<AudioSource>();
         //explosionParticles = explosionHolder.GetComponent<ParticleSystem>();
     }
 
@@ -56,8 +58,8 @@ public class Rocket : MonoBehaviour {
 
                 }
             }
-            AudioSource.PlayClipAtPoint(explosion, 0.9f * Camera.main.transform.position + 0.1f * transform.position, 1f); //makes audio louder by playing at a closer position to camera
-
+            //AudioSource.PlayClipAtPoint(explosion, 0.9f * Camera.main.transform.position + 0.1f * transform.position, 1f); //makes audio louder by playing at a closer position to camera
+            explosion.Play();
             if (trail)
                 trail.AboutToDie(); //let smoke trail persist after rocket is deleted
 
@@ -92,7 +94,7 @@ public class Rocket : MonoBehaviour {
                     if (rb.CompareTag("Player")) {
                         rb.AddExplosionForce(explosionForce * explosionModifier, transform.position, explosionRadius);
                     }
-                    if (rb.CompareTag("Enemy")) { //if an enemy is in explosion radius 
+                    else if (rb.CompareTag("Enemy")) { //if an enemy is in explosion radius 
                         rb.GetComponent<EnemyAi>().DisableAi(); //disable navigation to allow upwards lift
                         rb.AddExplosionForce(explosionForce, transform.position, explosionRadius, 2f);
                     }
@@ -102,8 +104,8 @@ public class Rocket : MonoBehaviour {
 
                 }
             }
-            AudioSource.PlayClipAtPoint(explosion, 0.9f * Camera.main.transform.position + 0.1f * transform.position, 1f); //makes audio louder by playing at a closer position to camera
-
+            //AudioSource.PlayClipAtPoint(explosion, 0.9f * Camera.main.transform.position + 0.1f * transform.position, 1f); //makes audio louder by playing at a closer position to camera
+            explosion.Play();
             if (trail)
                 trail.AboutToDie(); //let smoke trail persist after rocket is deleted
 

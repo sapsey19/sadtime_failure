@@ -17,10 +17,10 @@ public class LaucherScript : MonoBehaviour {
 
     float time = 0;
     private Animation recoil;
-    //private AudioSource fireSound; 
+    private AudioSource fireSound;
 
     private void Start() {
-        //fireSound = GetComponent<AudioSource>();
+        fireSound = GetComponent<AudioSource>();
         recoil = GetComponent<Animation>();
         cam = Camera.main;
     }
@@ -30,7 +30,7 @@ public class LaucherScript : MonoBehaviour {
         
         if (Input.GetButton("Fire1") && time > delay) {
             GameObject tempRocket;
-            //fireSound.Play();
+            fireSound.Play();
             recoil.Play("LauncherRecoil");
             if (Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, 1000f, whatIsExplodable)) {
                 if (Vector3.Distance(hit.point, spawnPos.position) < 1.4f) { //if in wall
