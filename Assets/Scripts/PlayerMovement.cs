@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour {
     //Movement
     public float moveSpeed = 4500;
     public float maxSpeed = 20;
-    public bool grounded;
+    public static bool grounded;
     public LayerMask whatIsGround;
 
     public float counterMovement = 0.175f; //how fast you stop moving (friction) 

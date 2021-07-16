@@ -114,25 +114,6 @@ public class EnemyAi : MonoBehaviour {
         agent.enabled = false;
     }
 
-    //public void OnTriggerEnter(Collider other) {
-    //    if (!agent.enabled && other.CompareTag("Environment")) {
-    //        agent.enabled = true;
-    //        GetComponent<Rigidbody>().isKinematic = true;
-    //        //Debug.Log("enabled");
-    //    }
-    //}
-
-    //private void IsOnGround() {
-    //    if(Physics.Raycast(transform.position, -Vector3.up, out RaycastHit hit, 10f)) {
-    //        if(hit.transform.CompareTag("Environment")) {
-    //            Debug.DrawLine(transform.position, hit.point, Color.cyan);
-    //            Debug.Log("heherh");
-    //            agent.enabled = true;
-    //            GetComponent<Rigidbody>().isKinematic = true;
-    //        }
-    //    }
-    //}
-
     private bool IsFloor(Vector3 v) {
         float angle = Vector3.Angle(Vector3.up, v);
         return angle < 35;
