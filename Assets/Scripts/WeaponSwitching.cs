@@ -39,7 +39,9 @@ public class WeaponSwitching : MonoBehaviour {
         }
 
         if (Input.GetKeyDown(KeyCode.Q)) {
+            int temp = selectedWeapon;
             selectedWeapon = previousWeapon;
+            previousWeapon = temp;
             SelectWeapon();
         }
 
@@ -55,7 +57,9 @@ public class WeaponSwitching : MonoBehaviour {
                 weapon.gameObject.SetActive(true);
             }
             else {
-                weapon.gameObject.SetActive(false); 
+                weapon.gameObject.SetActive(false);
+                //if(weapon.gameObject.transform.name == "lawnchair")
+                //    weapon.gameObject.GetComponent<Animation>().Play("WeaponSwitching");
             }
             i++;
         }

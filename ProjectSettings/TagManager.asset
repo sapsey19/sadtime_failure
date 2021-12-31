@@ -8,6 +8,7 @@ TagManager:
   - Launcher
   - Environment
   - Enemy
+  - PlayerBox
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - Weapon
   - Ground
   - Non Render
-  - 
+  - Wall
   - 
   - 
   - 

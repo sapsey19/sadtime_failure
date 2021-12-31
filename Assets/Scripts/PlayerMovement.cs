@@ -1,9 +1,12 @@
 using System;
+using System.Collections;
 //using System.Collections;
 //using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
+    
+    PlayerInputHandler m_InputHandler;
 
     //Assingables
     public Transform playerCam;
@@ -14,8 +17,7 @@ public class PlayerMovement : MonoBehaviour {
 
     //Rotation and look
     private float xRotation;
-    private float sensitivity = 50f;
-    private float sensMultiplier = 1f;
+   
 
     //Movement
     public float moveSpeed = 4500;
@@ -47,6 +49,8 @@ public class PlayerMovement : MonoBehaviour {
     private Vector3 normalVector = Vector3.up;
     private Vector3 wallNormalVector;
 
+    //Wallrunning
+    private WallRun wallRunComponent;
 
     //grappling hook stuff
     private Camera playerCamera;
@@ -61,6 +65,9 @@ public class PlayerMovement : MonoBehaviour {
     public GameObject hook;
 
     private AudioSource jump;
+
+    float m_CameraVerticalAngle = 0f;
+   
 
     public enum State {
         Normal,
@@ -79,10 +86,13 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     void Start() {
+        m_InputHandler = GetComponent<PlayerInputHandler>();
         Application.targetFrameRate = 144;
         playerScale = transform.localScale;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        wallRunComponent = GetComponent<WallRun>();
+        //Time.timeScale /= 4;
     }
 
 
@@ -104,6 +114,8 @@ public class PlayerMovement : MonoBehaviour {
 
     private void Update() {
         MyInput();
+        //Debug.Log(wallRunComponent.IsWallRunning());
+        //CheckForWall();
         switch (state) {
             default:
             case State.Normal:
@@ -127,19 +139,22 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
-    // Find user input. Should put this in its own class but im lazy
+    // Find user input. Now in it's own class :) 
     private void MyInput() {
-        x = Input.GetAxisRaw("Horizontal");
-        y = Input.GetAxisRaw("Vertical");
-        jumping = Input.GetButton("Jump");
-        crouching = Input.GetKey(KeyCode.LeftControl);
+        x = m_InputHandler.GetMoveInput().x; //Input.GetAxisRaw("Horizontal");
+        y = m_InputHandler.GetMoveInput().z; //Input.GetAxisRaw("Vertical");
+        jumping = m_InputHandler.GetJumpInputHeld(); //Input.GetButton("Jump");
+        crouching = m_InputHandler.GetCrouchInputDown(); //Input.GetKey(KeyCode.LeftControl);
 
         //Crouching
-        if (Input.GetKeyDown(KeyCode.LeftControl))
+        //if (Input.GetKeyDown(KeyCode.LeftControl))
+        if(m_InputHandler.GetCrouchInputDown())
+        //if (crouching)
             StartCrouch();
-        if (Input.GetKeyUp(KeyCode.LeftControl))
+        //if (Input.GetKeyUp(KeyCode.LeftControl))
+        if (m_InputHandler.GetCrouchInputReleased())
             StopCrouch();
-        if (Input.GetMouseButtonUp(0)) { // i don't like having grapple hook input in player move class... fix it 
+        if (m_InputHandler.GetFireInputReleased()) { // i don't like having grapple hook input in player move class... fix it 
             state = State.Normal; 
             hookshot.StopHookshot();
         }
@@ -151,6 +166,7 @@ public class PlayerMovement : MonoBehaviour {
         if (rb.velocity.magnitude > 0.5f) {
             if (grounded) {
                 rb.AddForce(orientation.transform.forward * slideForce);
+                Debug.Log("sliding");
             }
         }
     }
@@ -161,6 +177,8 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void Movement() {
+        //transform.localScale = crouchScale;
+        //transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
         //Extra gravity
         rb.AddForce(Vector3.down * Time.deltaTime * gravityMultiplier);
 
@@ -201,18 +219,18 @@ public class PlayerMovement : MonoBehaviour {
 
         // Movement while sliding
         if (grounded && crouching) {
-            multiplierV = 0f;
+            multiplierV = 2f;
         }
 
-
         //Apply forces to move player
-        rb.AddForce(orientation.transform.forward * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
-        rb.AddForce(orientation.transform.right * x * moveSpeed * Time.deltaTime * multiplier);
+        rb.AddForce(orientation.transform.forward * y * moveSpeed * Time.deltaTime * multiplier * multiplierV); //forward and back
+        rb.AddForce(orientation.transform.right * x * moveSpeed * Time.deltaTime * multiplier); //side to side 
     }
 
     private void Jump() {
         if (grounded && readyToJump) {
             readyToJump = false;
+            
 
             //Add jump forces
             rb.AddForce(Vector2.up * jumpForce * 1.5f);
@@ -238,8 +256,8 @@ public class PlayerMovement : MonoBehaviour {
 
     private float desiredX;
     private void Look() {
-        float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
-        float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
+        float mouseX = m_InputHandler.GetLookInputsHorizontal(); //Input.GetAxis("Mouse X") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
+        float mouseY = m_InputHandler.GetLookInputsVertical(); //Input.GetAxis("Mouse Y") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
 
         //Find current look rotation
         Vector3 rot = playerCam.transform.localRotation.eulerAngles;
@@ -250,7 +268,7 @@ public class PlayerMovement : MonoBehaviour {
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         //Perform the rotations
-        playerCam.transform.localRotation = Quaternion.Euler(xRotation, desiredX, 0);
+        playerCam.transform.localRotation = Quaternion.Euler(xRotation, desiredX, wallRunComponent.tilt); //wallRunComponent.tilt);
         orientation.transform.localRotation = Quaternion.Euler(0, desiredX, 0);
     }
 
@@ -326,17 +344,76 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
+    //private void StopWallrun() {
+    //    EnableGravity();
+    //    readyToWallrun = false;
+    //    //isWallRunning = false;
+    //    //Invoke(nameof(ResetWallrun), wallrunCooldown);
+    //}
+
+    //private void CheckForWall() {
+    //    //only allow wall running when not on ground 
+    //    if (!grounded) {
+    //        isWallRight = Physics.Raycast(transform.position, orientation.right, 1f, whatIsWall);
+    //        isWallLeft = Physics.Raycast(transform.position, -orientation.right, 1f, whatIsWall);
+    //        if (isWallRight || isWallLeft) {
+    //            readyToWallrun = true;
+    //            isWallRunning = true;
+    //            Wallrun();
+    //        }
+    //        //else StopWallrun();
+    //    }
+    //}
+
+    //public bool hasWallJumped = false;
+
+    //private void Wallrun() {
+        
+    //    if (isWallRunning) {
+    //        DisableGravity();
+    //        //hasWallJumped = true;
+    //        //zero out Y velocity 
+    //        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+
+    //        isWallRunning = true;
+            
+
+    //        if (rb.velocity.magnitude <= maxWallSpeed) {
+    //            rb.AddForce(orientation.forward * wallrunForce * Time.deltaTime);
+
+    //            //make player stick to wall
+    //            if (isWallRight)
+    //                rb.AddForce(orientation.right * wallrunForce  * Time.deltaTime);
+    //            else
+    //                rb.AddForce(-orientation.right * wallrunForce * Time.deltaTime);
+    //        }
+    //        if (rb.velocity.magnitude == 0) {
+    //            StopWallrun();
+    //            Debug.Log("magnitude 0");
+    //        }
+    //    }
+    //}
+
     private void StopGrounded() {
         grounded = false;
     }
 
     //disables extra gravity added to rigibody
     public void DisableGravity () {
+        rb.useGravity = false;
         gravityMultiplier = 0f;
     }
 
-    public void EnableGravity() { 
+    public void EnableGravity() {
+        rb.useGravity = true;
         gravityMultiplier = gravityValue;
     }
 
+    public bool IsGrounded() {
+        return grounded;
+    }
+
+    public void SetVelocity(Vector3 vel) {
+
+    }
 }
