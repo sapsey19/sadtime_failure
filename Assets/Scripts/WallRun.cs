@@ -188,6 +188,7 @@ public class WallRun : MonoBehaviour {
         
         if (m_InputHandler.GetJumpInputDown()) {
             jumping = true;
+            isWallRunning = false;
         }
 
         if (CanAttach()) {
@@ -210,6 +211,7 @@ public class WallRun : MonoBehaviour {
                 if (hits.Length > 0) {
                     rightWall = Physics.Raycast(transform.position, orientation.right, wallMaxDistance);
                     leftWall = Physics.Raycast(transform.position, -orientation.right, wallMaxDistance); //debug this 
+                    //Debug.Log("right wall: " + rightWall + " left wall: " + leftWall);
                     OnWall(hits[0]);
                     lastWallPosition = hits[0].point;
                     lastWallNormal = hits[0].normal;
@@ -268,7 +270,7 @@ public class WallRun : MonoBehaviour {
             }
             //Debug.Log("onwall"); 
             isWallRunning = true;
-            Debug.Log(CalculateSide());
+            //Debug.Log(CalculateSide());
         }
     }
 
@@ -293,6 +295,7 @@ public class WallRun : MonoBehaviour {
     //}
 
     public Vector3 GetWallJumpDirection() {
+        Debug.Log("here");
         if (isWallRunning) {
             return lastWallNormal + Vector3.up;
         }

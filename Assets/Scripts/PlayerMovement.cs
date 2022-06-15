@@ -228,7 +228,8 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void Jump() {
-        if (grounded && readyToJump) {
+        if (grounded && readyToJump && !wallRunComponent.IsWallRunning()) {
+            Debug.Log("should not be in here while wallrunning");
             readyToJump = false;
             
 
@@ -247,6 +248,21 @@ public class PlayerMovement : MonoBehaviour {
                 rb.velocity = new Vector3(vel.x, vel.y / 2, vel.z);
 
             Invoke(nameof(ResetJump), jumpCooldown);
+        }
+
+        if(readyToJump && wallRunComponent.IsWallRunning()) {
+            Debug.Log("should be in here while wallrunning");
+            readyToJump = false;
+
+            Vector3 vel = rb.velocity;
+            if (rb.velocity.y < 0.5f)
+                rb.velocity = new Vector3(vel.x, 0, vel.z);
+
+            //rb.velocity += wallRunComponent.GetWallJumpDirection() * jumpForce;
+            rb.AddForce(wallRunComponent.GetWallJumpDirection() * jumpForce);
+
+            Invoke(nameof(ResetJump), jumpCooldown);
+
         }
     }
 

@@ -62,7 +62,7 @@ public class HookshotGun : MonoBehaviour {
         else { //if rope distance is close enough to wall, start grapple 
             if (Vector3.Distance(currentGrapplePosition, grapplePoint) < .5f) { //should be a faster way to check distance
                 playerRb.velocity = Vector3.zero;
-                playerRb.useGravity = false;
+                //playerRb.useGravity = false;
                 playerMovement.DisableGravity();
                 playerMovement.state = PlayerMovement.State.HookshotFlyingPlayer;
             }
@@ -101,7 +101,7 @@ public class HookshotGun : MonoBehaviour {
     public void StopHookshot() {
         playerMovement.state = PlayerMovement.State.Normal;
         //enable both rigibody gravity and extra gravity in playerMovement script 
-        playerRb.useGravity = true;
+        //playerRb.useGravity = true;
         playerMovement.EnableGravity();
         reachedDesination = false;
         lr.enabled = false;

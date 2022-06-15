@@ -93007,6 +93007,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2008135110866826585, guid: 33e34f7cbd22ff34b922f39e4c912a6e,
         type: 3}
+      propertyPath: wallMaxDistance
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2008135110866826585, guid: 33e34f7cbd22ff34b922f39e4c912a6e,
+        type: 3}
       propertyPath: wallSpeedMultiplier
       value: 30
       objectReference: {fileID: 0}
